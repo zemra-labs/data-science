@@ -7,6 +7,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 bucket = {}
 table_header = []
@@ -59,30 +60,44 @@ def linear_model(df):
     dff = df
     df2 = dff.fillna(0)
     linreg = LinearRegression()
-
+    df2 = df2[pd.notnull(df2[['Mean Price', 'Volume']])]
     df3 = df2[['Mean Price','Volume']]
 
-    x = df3['Mean Price']
-    y = df3.Volume
-
-    sns.regplot(x, y, df3, fit_reg=False)
-    # sns.lmplot(x="Mean Price", y="Volume", data=df3)
-    sns.plt.show()
+    x = df3[['Mean Price']]
+    y = df3[['Volume']]
 
 
-    # x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
-    # linreg.fit(x_train, y_train)
+    plt.scatter(x, y, c='k')
+    plt.xlabel('Mean Price')
+    plt.ylabel('Volume')
 
-    # intercept = linreg.intercept_
-    # coef = linreg.coef_
-    # print intercept
-    # print coef
+    # sns.regplot(x, y, df3, fit_reg=False)
+    # # sns.lmplot(x="Mean Price", y="Volume", data=df3)
+    # sns.plt.show()
 
-    # # make prediction on testing set
-    # prediction = linreg.predict(x_test)
 
-    # # compute root mean squared error
-    # print np.sqrt(metrics.mean_squared_error(y_test, prediction))
+    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
+    linreg.fit(x_train, y_train)
+
+    intercept = linreg.intercept_
+    coef = linreg.coef_
+
+    plt.plot(x_train, linreg.predict(x_train), lw=2)
+    plt.scatter(x_train, y_train, c='k')
+    plt.xlabel('Mean Price')
+    plt.ylabel('Volume')
+    plt.show()
+
+    # make prediction on testing set
+    prediction = linreg.predict(x_test)
+
+    # compute root mean squared error
+    print np.sqrt(metrics.mean_squared_error(y_test, prediction))
+
+    rss = np.sum((y_test - linreg.predict(x_test)) ** 2)
+    score = linreg.score(x_test, y_test)
+    #
+    # print score
 
 def create_df(table_header, table_data):
     df = pd.DataFrame.from_dict(table_data, orient='index')

@@ -6,17 +6,14 @@ import traceback
 from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
+import seaborn as sns
 
-
-# import seaborn as sns
 bucket = {}
 table_header = []
 table_data = {}
 tb_data = []
 tb_d = []
 tr_data = []
-
-# x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
 
 def get_data(stock):
     stock = stock.lower()
@@ -60,25 +57,30 @@ def data_cleansing(df):
 
 def linear_model(df):
     dff = df
-    print dff.isnull().values.any()
     df2 = dff.fillna(0)
-    print df2.isnull().values.any()
-    # print dff
     linreg = LinearRegression()
 
-    x = df2[['Mean Price']]
-    y = df2[['Volume']]
+    df3 = df2[['Mean Price','Volume']]
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
-    # linreg.fit(x, y)
-    linreg.fit(x_train, y_train)
+    x = df3['Mean Price']
+    y = df3.Volume
+
+    sns.regplot(x, y, df3, fit_reg=False)
+    # sns.lmplot(x="Mean Price", y="Volume", data=df3)
+    sns.plt.show()
+
+
+    # x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
+    # linreg.fit(x_train, y_train)
 
     # intercept = linreg.intercept_
     # coef = linreg.coef_
-    #
+    # print intercept
+    # print coef
+
     # # make prediction on testing set
     # prediction = linreg.predict(x_test)
-    #
+
     # # compute root mean squared error
     # print np.sqrt(metrics.mean_squared_error(y_test, prediction))
 

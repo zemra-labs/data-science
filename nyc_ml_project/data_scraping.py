@@ -53,7 +53,6 @@ def data_cleansing(df):
     df2 = df[['Open','Close', 'Volume']]
     df3 = df2.apply(pd.to_numeric, errors='coerce')
     df3['Mean Price'] = (df3['Open'] + df3['Close'])/2
-    print df3
     return df3
 
 def linear_model(df):
@@ -66,38 +65,24 @@ def linear_model(df):
     x = df3[['Mean Price']]
     y = df3[['Volume']]
 
-
-    plt.scatter(x, y, c='k')
-    plt.xlabel('Mean Price')
-    plt.ylabel('Volume')
-
-    # sns.regplot(x, y, df3, fit_reg=False)
-    # # sns.lmplot(x="Mean Price", y="Volume", data=df3)
-    # sns.plt.show()
-
-
     x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
     linreg.fit(x_train, y_train)
-
     intercept = linreg.intercept_
     coef = linreg.coef_
 
-    plt.plot(x_train, linreg.predict(x_train), lw=2)
+    plt.plot(x_train, linreg.predict(x_train), c='g', lw=3, label='Fitted line')
     plt.scatter(x_train, y_train, c='k')
     plt.xlabel('Mean Price')
     plt.ylabel('Volume')
     plt.show()
 
-    # make prediction on testing set
-    prediction = linreg.predict(x_test)
 
-    # compute root mean squared error
-    print np.sqrt(metrics.mean_squared_error(y_test, prediction))
-
-    rss = np.sum((y_test - linreg.predict(x_test)) ** 2)
-    score = linreg.score(x_test, y_test)
+    # # compute root mean squared error
+    # print np.sqrt(metrics.mean_squared_error(y_test, prediction))
     #
-    # print score
+    # rss = np.sum((y_test - linreg.predict(x_test)) ** 2)
+    score = linreg.score(x_train, y_train)
+    print score
 
 def create_df(table_header, table_data):
     df = pd.DataFrame.from_dict(table_data, orient='index')
